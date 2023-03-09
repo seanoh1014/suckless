@@ -1,0 +1,17 @@
+#!/bin/sh
+
+case $BLOCK_BUTTON in
+	1) $TERMINAL -e nmtui ;;
+	3) pgrep -x dunst >/dev/null && notify-send " Internet module" "\- Click to connect
+睊: no wifi connection
+直: wifi connection with quality
+: no ethernet
+: ethernet working
+" ;;
+esac
+
+[ "$(cat /sys/class/net/wlan0/operstate)" = 'down' ] && wifiicon="睊"
+
+[ ! -n "${wifiicon+var}" ] && wifiicon=$(grep "^\s*w" /proc/net/wireless | awk '{ print "直", int($3 * 100 / 70) "%" }')
+
+printf "%s %s\n" "$wifiicon" "$(cat /sys/class/net/wlan0/operstate | sed "s/down//;s/up//")"
